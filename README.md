@@ -5,12 +5,15 @@ Intriman is a documentation generator that retargets the [Intel Intrinsics Guide
 ---
 
 Man page(groff):
+
 ![](media/manpage.png)
 
 Markdown:
+
 ![](media/markdown.png)
 
 Plaintext:
+
 ![](media/plaintext.png)
 
 ---
@@ -42,7 +45,7 @@ Finally, select your desired build target and architecture and then build. Compi
 
 ### Linux
 
-Typical [Cmake out-of-source procedure](http://preshing.com/20170511/how-to-build-a-cmake-based-project/#running-cmake-from-the-command-line):
+Typical [Cmake out-of-source build procedure](http://preshing.com/20170511/how-to-build-a-cmake-based-project/#running-cmake-from-the-command-line):
 
 ```
 cd Intriman
