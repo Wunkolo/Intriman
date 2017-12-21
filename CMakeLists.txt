@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 3.2.2 )
 project( Intriman )
 
 ### Standard
-set( CMAKE_CXX_STANDARD 11 )
+set( CMAKE_CXX_STANDARD 17 )
 set( CMAKE_CXX_STANDARD_REQUIRED ON )
 set( CMAKE_CXX_EXTENSIONS OFF )
 
@@ -24,13 +24,28 @@ endif()
 ### Targets
 add_executable(
 	Intriman
-	source/main.cpp
+	source/Intriman/main.cpp
+	source/Intriman/Intriman.cpp
+	source/Intriman/Settings.cpp
+	source/Intriman/Generators/Text.cpp
+	source/Intriman/Generators/Roff.cpp
+	source/Intriman/Generators/Markdown.cpp
 
 ### pugixml
 	dependencies/pugixml/src/pugiconfig.hpp
 	dependencies/pugixml/src/pugixml.hpp
 	dependencies/pugixml/src/pugixml.cpp
 )
+
+if( MSVC )
+
+elseif( CMAKE_COMPILER_IS_GNUCXX )
+	target_link_libraries(
+		Intriman
+		stdc++fs
+	)
+endif()
+
 target_include_directories(
 	Intriman
 	PRIVATE
