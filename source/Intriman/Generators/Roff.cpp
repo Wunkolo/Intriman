@@ -4,6 +4,7 @@
 #include <cctype>
 
 #include <algorithm>
+#include <regex>
 #include <fstream>
 #include <iomanip>
 #include <unordered_map>
@@ -37,7 +38,7 @@ private:
 
 RoffGenerator::RoffGenerator(const fs::path& Folder)
 {
-	CurPath = Folder / "Roff";
+	CurPath = Folder / "roff";
 	fs::create_directories(CurPath);
 }
 
@@ -86,51 +87,71 @@ void RoffGenerator::VisitIntrinsic(const Intriman::Intrinsic& CurIntrin)
 	Stream
 		<< ".TH "
 		<< CurIntrin.Name
-		<< " \"3P\" "
-		<< Version
+		<< " 3 "
+		<< Date
 		<< " \""
 		<< CurIntrin.Technology
-		<< " Intrinsics"
-		<< "\" "
-		<< "\n";
-
-	// Intrinsic 
-	if( CurIntrin.Header != nullptr )
-	{
-		Stream
-			<< ".SH NAME\n"
-			<< ".PP\n"
-			<< "#include <"
-			<< CurIntrin.Header
-			<< ">\n";
-	}
+		<< " Intrinsics\" \n";
 
 	Stream
-		<< ".SH SYNOPSIS\n"
-		<< ".PP\n"
-		<< "\\ffI" << CurIntrin.ReturnType << "\\fP "
-		<< CurIntrin.Name << '('
-		<< "\n";
+		<< ".SH NAME\n"
+		<< CurIntrin.Name
+		<< '\n';
+
+	// Syntax
+	Stream
+		<< ".SH SYNTAX\n"
+		<< "\\f[B]#include <\\f[]"
+		<< "\\f[I]"
+		<< CurIntrin.Header
+		<< "\\f[]\\f[B]>\\f[]\n.sp\n.sp\n";
+
+	Stream
+		<< CurIntrin.ReturnType
+		<< " \\f[B]" << CurIntrin.Name << "\\f[]( ";
 
 	i = 0;
-	for( const auto& CurParam : CurIntrin.Parameters )
+	if( CurIntrin.Parameters.size() > 3 )
 	{
-		Stream
-			<< '\t'
-			<< CurParam.Type
-			<< ' '
-			<< "\fI" << CurParam.Name << "\fP"
-			<< (i == CurIntrin.Parameters.size() - 1 ? ' ' : ',')
-			<< '\n';
-		++i;
+		Stream << "\n.br\n";
+		for( const auto& CurParam : CurIntrin.Parameters )
+		{
+			Stream << '\t' <<  CurParam.Type;
+
+			if( CurParam.Name != nullptr )
+			{
+				Stream
+					<< "\t\\f[I]" << CurParam.Name << "\\f[]";
+			}
+			Stream
+				<< (i == CurIntrin.Parameters.size() - 1 ? "\n.br\n" : ",\n.br\n");
+			++i;
+		}
 	}
-	Stream
-		<< ");\n\n";
+	else
+	{
+		for( const auto& CurParam : CurIntrin.Parameters )
+		{
+			Stream
+				<< CurParam.Type;
+
+			if( CurParam.Name != nullptr )
+			{
+				Stream
+					<< " \\f[I]" << CurParam.Name << "\\f[]";
+			}
+			Stream
+				<< (i == CurIntrin.Parameters.size() - 1 ? "" : ", ");
+			++i;
+		}
+	}
+	Stream << ");\n";
 
 	// Description
 	if( CurIntrin.Description != nullptr )
 	{
 		Stream
+			<< ".SH DESCRIPTION\n"
 			<< CurIntrin.Description
 			<< '\n';
 	}
@@ -138,8 +159,15 @@ void RoffGenerator::VisitIntrinsic(const Intriman::Intrinsic& CurIntrin)
 	// Operation
 	if( CurIntrin.Operation != nullptr )
 	{
+		std::string Pseudo(CurIntrin.Operation);
+		Pseudo = std::regex_replace(
+			Pseudo,
+			std::regex("\n"),
+			"\n.br\n"
+		);
 		Stream
-			<< CurIntrin.Operation
+			<< ".SH OPERATION\n"
+			<< Pseudo
 			<< '\n';
 	}
 
@@ -147,35 +175,37 @@ void RoffGenerator::VisitIntrinsic(const Intriman::Intrinsic& CurIntrin)
 	if( CurIntrin.CPUID.size() )
 	{
 		Stream
-			<< "CPUID: ";
+			<< ".SH CPUID\n";
 		i = 0;
 		for( const auto& CurCPUID : CurIntrin.CPUID )
 		{
 			Stream
+				<< "\\f[I]"
 				<< CurCPUID
+				<< "\\f[]"
 				<< (i == CurIntrin.CPUID.size() - 1 ? ' ' : ',');
 			++i;
 		}
-		Stream
-			<< "\n\n";
+		Stream << '\n';
 	}
 
 	// Instructions
 	if( CurIntrin.Instructions.size() )
 	{
 		Stream
-			<< std::setw(16) << std::left << "Instruction"
-			<< std::setw(16) << "Operands"
-			<< '\n'
-			<< std::string(32, '-')
-			<< '\n';
+			<< ".SH ASSEMBLY\n"
+			<< ".TS\nALLBOX;\nl c.\n"
+			<< "\\f[B]Instruction\tOperands\\f[]\n";
 		for( const auto& CurInstruction : CurIntrin.Instructions )
 		{
 			Stream
-				<< std::setw(16) << std::left << CurInstruction.Name
-				<< std::setw(16) << CurInstruction.Form
-				<< '\n';
+				<< "\\f[I]"
+				<< CurInstruction.Name
+				<< '\t'
+				<< CurInstruction.Form
+				<< "\\f[]\n";
 		}
+		Stream << ".TE\n";
 	}
 }
 
