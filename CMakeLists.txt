@@ -52,3 +52,14 @@ target_include_directories(
 	include
 	dependencies/pugixml/src
 )
+
+### Download data-latest.xml listing
+message(
+	STATUS "Downloading data-latest.xml from intel..."
+)
+file(
+	DOWNLOAD
+	"https://software.intel.com/sites/landingpage/IntrinsicsGuide/files/data-latest.xml"
+	"./data-latest.xml"
+	SHOW_PROGRESS
+)

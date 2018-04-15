@@ -57,7 +57,8 @@ make
 
 ## Usage
 
-Download `https://software.intel.com/sites/landingpage/IntrinsicsGuide/files/data-latest.xml` and simply drag and drop this file onto the executable, or put `data-latest.xml` as the first argument, and the documentation files will be generated( default output directory is `./docs/` relative to the executable path )
+CMake generation should automatically download `data-latest.xml` from Intel.
+Otherwise, download the file from `https://software.intel.com/sites/landingpage/IntrinsicsGuide/files/data-latest.xml` and simply drag and drop this file onto the executable, or put `data-latest.xml` as the first argument(`Intriman data-latest.xml`), and the documentation files will be generated( default output directory is `./docs/` relative to the executable path )
 
 ![](https://i.imgur.com/YwGg9y0.png)
 
