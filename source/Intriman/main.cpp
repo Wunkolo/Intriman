@@ -43,15 +43,13 @@ int main(int argc, const char* argv[])
 
 	std::vector<std::unique_ptr<Intriman::IGenerator>> Generators;
 
-	Generators.push_back(
-		Intriman::GeneratorFactory::CreateMarkdownGenerator(CurSettings)
+#undef GEN_ENTRY
+#define GEN_ENTRY(GEN_NAME) \
+	Generators.push_back( \
+		Intriman::GeneratorFactory::Create##GEN_NAME##Generator(CurSettings)\
 	);
-	Generators.push_back(
-		Intriman::GeneratorFactory::CreateRoffGenerator(CurSettings)
-	);
-	Generators.push_back(
-		Intriman::GeneratorFactory::CreateTextGenerator(CurSettings)
-	);
+#include <Intriman/Generators/GeneratorList.hpp>
+#undef GEN_ENTRY
 
 	return Intriman::ProcessFile(InputFile, Generators) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
