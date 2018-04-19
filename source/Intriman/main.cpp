@@ -12,10 +12,14 @@ namespace fs = std::experimental::filesystem;
 void PrintHelp()
 {
 	std::puts("Intriman | Build Date: " __TIMESTAMP__);
+	std::puts(
+		"Generates alternative documentation formats from the intel intrinsics"
+		"database."
+		);
+	std::puts("\t - Wunkolo <wunkolo@gmail.com>");
 	std::puts("Available Generators:");
 #undef GEN_ENTRY
-#define GEN_ENTRY(GEN_NAME) std::puts("\t-" #GEN_NAME);
-
+#define GEN_ENTRY(GEN_NAME) std::puts("\t - " #GEN_NAME);
 #include <Intriman/Generators/GeneratorList.hpp>
 #undef GEN_ENTRY
 }
