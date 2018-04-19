@@ -1,4 +1,4 @@
-# Intriman
+# Intriman [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Intriman is a documentation generator that retargets the [Intel Intrinsics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide/) data into additional **offline** documentation formats.
 
