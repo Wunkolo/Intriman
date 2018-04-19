@@ -1,5 +1,7 @@
 #include <Intriman/Intriman.hpp>
 
+#include <cmath>
+
 #include <pugixml.hpp>
 
 #include <Intriman/Generators/IGenerator.hpp>
@@ -30,6 +32,12 @@ bool ProcessFile(
 			IntrinsicsList.attribute("date").value()
 		);
 	}
+
+	std::size_t CurIndex = 0;
+	const std::size_t LastIndex = std::distance(
+		Document.first_child().children().begin(),
+		Document.first_child().children().end()
+	) - 1;
 
 	for( const pugi::xml_node& IntrinsicXML : Document.first_child().children() )
 	{
@@ -79,6 +87,16 @@ bool ProcessFile(
 		{
 			CurGenerator->VisitIntrinsic(CurIntrinsic);
 		}
+
+		CurIndex++;
+		std::printf(
+			"Processing instruction: %8zu/%8zu %%%5.2f%c",
+			CurIndex,
+			LastIndex,
+			(CurIndex / static_cast<std::float_t>(LastIndex)) * 100.0f,
+			CurIndex == LastIndex ? '\n':'\r'
+		);
+		std::fflush(stdout);
 	}
 
 	for( auto& CurGenerator : Generators )
