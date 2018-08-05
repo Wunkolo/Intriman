@@ -14,7 +14,8 @@ void PrintHelp()
 	std::puts("Intriman | Build Date: " __TIMESTAMP__);
 	std::puts(
 		"Generates alternative documentation formats from the intel intrinsics"
-		"database."
+		"database.\n"
+		"Usage: ./Intriman [data-latest.xml]"
 		);
 	std::puts("\t - Wunkolo <wunkolo@gmail.com>");
 	std::puts("Available Generators:");
