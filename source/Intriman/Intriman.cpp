@@ -10,20 +10,22 @@ namespace Intriman
 {
 
 bool ProcessFile(
-	std::istream& Stream,
+	std::istream& IntrinsicsFile,
+	std::istream& LatencyFile,
 	const std::vector<std::unique_ptr<IGenerator>>& Generators
 )
 {
-	pugi::xml_document Document;
-	const pugi::xml_parse_result Parse = Document.load(Stream);
+	// Parse Intrinsics
+	pugi::xml_document IntrinsicDocument;
+	const pugi::xml_parse_result IntrinsicXML = IntrinsicDocument.load(IntrinsicsFile);
 
-	if( Parse.status != pugi::xml_parse_status::status_ok )
+	if( IntrinsicXML.status != pugi::xml_parse_status::status_ok )
 	{
 		// Error parsing
 		return false;
 	}
 
-	const pugi::xml_node IntrinsicsList = Document.first_child();
+	const pugi::xml_node IntrinsicsList = IntrinsicDocument.first_child();
 
 	for( auto& CurGenerator : Generators )
 	{
@@ -35,21 +37,21 @@ bool ProcessFile(
 
 	std::size_t CurIndex = 0;
 	const std::size_t LastIndex = std::distance(
-		Document.first_child().children().begin(),
-		Document.first_child().children().end()
+		IntrinsicDocument.first_child().children().begin(),
+		IntrinsicDocument.first_child().children().end()
 	) - 1;
 
-	for( const pugi::xml_node& IntrinsicXML : Document.first_child().children() )
+	for( const pugi::xml_node& IntrinsicNode : IntrinsicDocument.first_child().children() )
 	{
 		Intriman::Intrinsic CurIntrinsic;
-		CurIntrinsic.Name = IntrinsicXML.attribute("name").value();
-		CurIntrinsic.ReturnType = IntrinsicXML.attribute("rettype").value();
-		CurIntrinsic.Technology = IntrinsicXML.attribute("tech").value();
+		CurIntrinsic.Name = IntrinsicNode.attribute("name").value();
+		CurIntrinsic.ReturnType = IntrinsicNode.attribute("rettype").value();
+		CurIntrinsic.Technology = IntrinsicNode.attribute("tech").value();
 
-		CurIntrinsic.Type = IntrinsicXML.child("type").child_value();
-		CurIntrinsic.Category = IntrinsicXML.child("category").child_value();
+		CurIntrinsic.Type = IntrinsicNode.child("type").child_value();
+		CurIntrinsic.Category = IntrinsicNode.child("category").child_value();
 		// CPUID
-		for( pugi::xml_node CurCPUID = IntrinsicXML.child("CPUID");
+		for( pugi::xml_node CurCPUID = IntrinsicNode.child("CPUID");
 			CurCPUID;
 			CurCPUID = CurCPUID.next_sibling("CPUID")
 		)
@@ -57,12 +59,12 @@ bool ProcessFile(
 			CurIntrinsic.CPUID.push_back(CurCPUID.text().get());
 		}
 
-		CurIntrinsic.Description = IntrinsicXML.child("description").child_value();
-		CurIntrinsic.Operation = IntrinsicXML.child("operation").child_value();
-		CurIntrinsic.Header = IntrinsicXML.child("header").child_value();
+		CurIntrinsic.Description = IntrinsicNode.child("description").child_value();
+		CurIntrinsic.Operation = IntrinsicNode.child("operation").child_value();
+		CurIntrinsic.Header = IntrinsicNode.child("header").child_value();
 
 		// Parameters
-		for( pugi::xml_node CurParam = IntrinsicXML.child("parameter");
+		for( pugi::xml_node CurParam = IntrinsicNode.child("parameter");
 			CurParam;
 			CurParam = CurParam.next_sibling("parameter")
 		)
@@ -74,13 +76,13 @@ bool ProcessFile(
 		}
 
 		// Instruction
-		for( pugi::xml_node CurInstru = IntrinsicXML.child("instruction");
-			CurInstru;
-			CurInstru = CurInstru.next_sibling("instruction") )
+		for( pugi::xml_node InstructionNode = IntrinsicNode.child("instruction");
+			InstructionNode;
+			InstructionNode = InstructionNode.next_sibling("instruction") )
 		{
 			Intriman::Intrinsic::Instruction NewInstruc;
-			NewInstruc.Name = CurInstru.attribute("name").value();
-			NewInstruc.Form = CurInstru.attribute("form").value();
+			NewInstruc.Name = InstructionNode.attribute("name").value();
+			NewInstruc.Operands = InstructionNode.attribute("form").value();
 			CurIntrinsic.Instructions.push_back(NewInstruc);
 		}
 		for( auto& CurGenerator : Generators )

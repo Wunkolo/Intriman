@@ -10,7 +10,8 @@
 namespace Intriman
 {
 bool ProcessFile(
-	std::istream& Stream,
+	std::istream& IntrinsicsFile, // Data from Intel
+	std::istream& LatencyFile,    // Data from uops.info
 	const std::vector<std::unique_ptr<IGenerator>>& Visitor
 );
 }
