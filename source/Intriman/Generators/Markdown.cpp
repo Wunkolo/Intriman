@@ -185,7 +185,7 @@ void MarkdownGenerator::VisitIntrinsic(const Intriman::Intrinsic& CurIntrin)
 			Stream
 				<< CurInstruction.Name
 				<< '|'
-				<< CurInstruction.Form
+				<< CurInstruction.Operands
 				<< '\n';
 		}
 	}

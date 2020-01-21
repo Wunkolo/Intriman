@@ -202,7 +202,7 @@ void RoffGenerator::VisitIntrinsic(const Intriman::Intrinsic& CurIntrin)
 				<< "\\f[I]"
 				<< CurInstruction.Name
 				<< '\t'
-				<< CurInstruction.Form
+				<< CurInstruction.Operands
 				<< "\\f[]\n";
 		}
 		Stream << ".TE\n";

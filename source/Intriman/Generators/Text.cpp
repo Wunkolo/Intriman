@@ -230,7 +230,7 @@ void TextGenerator::VisitIntrinsic(const Intriman::Intrinsic& CurIntrin)
 		{
 			Stream
 				<< std::setw(16) << std::left << CurInstruction.Name
-				<< std::setw(16) << CurInstruction.Form
+				<< std::setw(16) << CurInstruction.Operands
 				<< '\n';
 		}
 	}

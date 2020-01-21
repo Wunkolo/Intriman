@@ -56,11 +56,21 @@ target_include_directories(
 
 ### Download data-latest.xml listing
 message(
-	STATUS "Downloading data-latest.xml from intel..."
+	STATUS "Downloading latest intrinsics data from intel..."
 )
 file(
 	DOWNLOAD
 	"https://software.intel.com/sites/landingpage/IntrinsicsGuide/files/data-latest.xml"
-	"./data-latest.xml"
+	"./intrinsics.xml"
+	SHOW_PROGRESS
+)
+
+message(
+	STATUS "Downloading latency data from uops.info..."
+)
+file(
+	DOWNLOAD
+	"https://uops.info/instructions.xml"
+	"./latency.xml"
 	SHOW_PROGRESS
 )

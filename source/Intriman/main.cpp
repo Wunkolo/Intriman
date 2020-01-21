@@ -13,7 +13,7 @@ void PrintHelp()
 {
 	std::puts("Intriman | Build Date: " __TIMESTAMP__);
 	std::puts(
-		"Generates alternative documentation formats from the intel intrinsics"
+		"Generates alternative documentation formats from the intel intrinsics "
 		"database."
 		);
 	std::puts("\t - Wunkolo <wunkolo@gmail.com>");
@@ -26,20 +26,17 @@ void PrintHelp()
 
 int main(int argc, const char* argv[])
 {
-	if( argc < 2 )
+	PrintHelp();
+	std::ifstream IntrinsicFile("intrinsics.xml");
+	if( !IntrinsicFile )
 	{
-		PrintHelp();
+		std::fputs("Error opening intrinsics file: intrinsics.xml", stderr);
 		return EXIT_FAILURE;
 	}
-
-	std::ifstream InputFile(argv[1]);
-
-	if( !InputFile )
+	std::ifstream LatencyFile("latency.xml");
+	if( !LatencyFile )
 	{
-		std::printf(
-			"Error opening file: %s",
-			argv[1]
-		);
+		std::fputs("Error opening latency file: latency.xml", stderr);
 		return EXIT_FAILURE;
 	}
 
@@ -55,5 +52,8 @@ int main(int argc, const char* argv[])
 #include <Intriman/Generators/GeneratorList.hpp>
 #undef GEN_ENTRY
 
-	return Intriman::ProcessFile(InputFile, Generators) ? EXIT_SUCCESS : EXIT_FAILURE;
+	return Intriman::ProcessFile(
+		IntrinsicFile, LatencyFile,
+		Generators
+	) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
